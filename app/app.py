@@ -9,5 +9,5 @@ tornados_page = st.Page("pages/tornados.py", title="Tornados", icon="🌪️")
 loss_page = st.Page("pages/loss.py", title="Perdas e Prejuízos", icon="💰")
 
 pg = st.navigation([maps_page, tornados_page, loss_page])
-st.set_page_config(page_title="Página Inicial", page_icon=":material/home:")
+st.set_page_config(page_title="Página Inicial", page_icon=":material/home:",layout="wide")
 pg.run()
