@@ -9,6 +9,9 @@ def readData():
 def filterOldMagnitude(data):
   return data[data['fc'] == 0]
 
+def filterNonIdentifiedMagnitudes(data):
+  return data[data['mag'] >= 0]
+
 def filterColumns(data):
   return data.drop(['OBJECTID','om','yr','mo','dy','stf','stn','Month_Calc','Date_Calc','Shape__Length','fc'],axis=1)
 
@@ -177,6 +180,7 @@ def saveData(data):
 if __name__ == "__main__":
     data = readData()
     data = filterOldMagnitude(data)
+    data = filterNonIdentifiedMagnitudes(data)
     data = filterColumns(data)
     data = formatDateColumn(data)
     data = renameColumns(data)
