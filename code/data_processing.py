@@ -12,8 +12,8 @@ def filterOldMagnitude(data):
 def filterColumns(data):
   return data.drop(['OBJECTID','om','yr','mo','dy','stf','stn','Month_Calc','Date_Calc','Shape__Length','fc'],axis=1)
 
-def generateDateTimeColumn(data):
-  data['Datetime'] = pd.to_datetime(data['date'] + ' ' + data['time'] + '-' + data['tz'].astype(str))
+def formatDateColumn(data):
+  data['Date'] = pd.to_datetime(data['date'])
   return data.drop(['date','time','tz'],axis=1)
 
 def renameColumns(data):
@@ -178,7 +178,7 @@ if __name__ == "__main__":
     data = readData()
     data = filterOldMagnitude(data)
     data = filterColumns(data)
-    data = generateDateTimeColumn(data)
+    data = formatDateColumn(data)
     data = renameColumns(data)
     data = convertYardsToMeters(data)
     data = getStateNames(data)
