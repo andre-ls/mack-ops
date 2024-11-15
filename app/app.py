@@ -1,7 +1,9 @@
+import os
 import streamlit as st
 import pandas as pd
 import numpy as np
 
+st.session_state['app_directory'] = os.path.dirname(__file__)
 st.session_state['data'] = pd.read_csv("data/processed/tornado_processed_data.csv")
 
 maps_page = st.Page("pages/maps.py", title="Mapas", icon="🗺️")
