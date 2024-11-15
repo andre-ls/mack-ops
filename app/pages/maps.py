@@ -1,3 +1,4 @@
+import os
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -41,7 +42,7 @@ def calculateCards(data):
 
     return totalTornados, totalLoss, totalFatalities, totalInjuries
 
-def positionCards(totalTornados, totalLoss, totalFatalities, totalInjuries):
+def positionCards(app_directory, totalTornados, totalLoss, totalFatalities, totalInjuries):
     space_left,\
     column_image_1, column_1,\
     column_image_2, column_2,\
@@ -49,14 +50,26 @@ def positionCards(totalTornados, totalLoss, totalFatalities, totalInjuries):
     column_image_4, column_4,\
     space_right = st.columns([1.0, 0.7, 2.0, 0.7, 2.0, 0.7, 2.0, 0.7, 2.0, 0.2])
 
+    with column_image_1:
+        st.image(os.path.join(app_directory,"images/tornado.png"),width=70)
+
     with column_1:
         st.metric('Total de Tornados', totalTornados)
+    
+    with column_image_2:
+        st.image(os.path.join(app_directory,"images/perda-de-dinheiro.png"),width=70)
 
     with column_2:
         st.metric('Perdas Totais ($)', str(totalLoss) + 'M')
 
+    with column_image_3:
+        st.image(os.path.join(app_directory,"images/paciente.png"),width=70)
+
     with column_3:
         st.metric('Feridos', totalInjuries)
+
+    with column_image_4:
+        st.image(os.path.join(app_directory,"images/farmacia.png"),width=70)
 
     with column_4:
         st.metric('Fatalidades', totalFatalities)
@@ -80,14 +93,15 @@ def generateMap(data, map_config):
     map.add_data(data=mapData,name='Tornados')
     keplergl_static(map,width=1250)
 
-st.title('Mapas')
+st.title('🗺️Mapas')
 with st.sidebar:
     st.title('Filtros')
     data = st.session_state['data']
+    app_directory = st.session_state['app_directory']
     date_min, date_max, states, mag_min, mag_max, map_view, measure = setupFilters(data)
 
 mapData = filterData(data, date_min, date_max, mag_min, mag_max, states)
 totalTornados, totalLoss, totalFatalities, totalInjuries = calculateCards(mapData)
-positionCards(totalTornados, totalLoss, totalFatalities, totalInjuries)
+positionCards(app_directory, totalTornados, totalLoss, totalFatalities, totalInjuries)
 map_config = getMapConfiguration(map_view, measure)
 generateMap(data, map_config)
