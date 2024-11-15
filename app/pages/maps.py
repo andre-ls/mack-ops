@@ -43,6 +43,8 @@ def getMapConfiguration(map_view, measure):
             return fatalities_hex
         if measure == 'Feridos':
             return injuries_hex
+        if measure == 'Perdas Econômicas':
+            return loss_hex
 
 def generateMap(data, map_config):
     map = KeplerGl(height=600, config=map_config)
