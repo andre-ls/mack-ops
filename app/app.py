@@ -10,6 +10,10 @@ maps_page = st.Page("pages/maps.py", title="Mapas", icon="🗺️")
 tornados_page = st.Page("pages/tornados.py", title="Tornados", icon="🌪️")
 loss_page = st.Page("pages/loss.py", title="Perdas e Prejuízos", icon="💰")
 
+st.logo('https://www.fema.gov/profiles/femad8_gov/themes/fema_uswds/images/fema-logo-blue.svg',
+        size='large',
+        link='https://gis-fema.hub.arcgis.com/datasets/fedmaps::tornado-tracks-1/about')
+
 pg = st.navigation([maps_page, tornados_page, loss_page])
 st.set_page_config(page_title="Página Inicial", page_icon=":material/home:",layout="wide")
 pg.run()
