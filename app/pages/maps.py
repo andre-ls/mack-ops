@@ -33,6 +33,35 @@ def filterData(data, date_min, date_max, mag_min, mag_max, states):
 
     return plot_data
 
+def calculateCards(data):
+    totalTornados = len(data)
+    totalLoss = np.round(data['Total_Loss'].sum()/1000000,2)
+    totalFatalities = data['Fatalities'].sum()
+    totalInjuries = data['Injuries'].sum()
+
+    return totalTornados, totalLoss, totalFatalities, totalInjuries
+
+def positionCards(totalTornados, totalLoss, totalFatalities, totalInjuries):
+    space_left,\
+    column_image_1, column_1,\
+    column_image_2, column_2,\
+    column_image_3, column_3,\
+    column_image_4, column_4,\
+    space_right = st.columns([1.0, 0.7, 2.0, 0.7, 2.0, 0.7, 2.0, 0.7, 2.0, 0.2])
+
+    with column_1:
+        st.metric('Total de Tornados', totalTornados)
+
+    with column_2:
+        st.metric('Perdas Totais ($)', str(totalLoss) + 'M')
+
+    with column_3:
+        st.metric('Feridos', totalInjuries)
+
+    with column_4:
+        st.metric('Fatalidades', totalFatalities)
+
+
 def getMapConfiguration(map_view, measure):
     if map_view == 'Trajetórias':
         return tracks_config
@@ -51,7 +80,6 @@ def generateMap(data, map_config):
     map.add_data(data=mapData,name='Tornados')
     keplergl_static(map,width=1250)
 
-
 st.title('Mapas')
 with st.sidebar:
     st.title('Filtros')
@@ -59,5 +87,7 @@ with st.sidebar:
     date_min, date_max, states, mag_min, mag_max, map_view, measure = setupFilters(data)
 
 mapData = filterData(data, date_min, date_max, mag_min, mag_max, states)
+totalTornados, totalLoss, totalFatalities, totalInjuries = calculateCards(mapData)
+positionCards(totalTornados, totalLoss, totalFatalities, totalInjuries)
 map_config = getMapConfiguration(map_view, measure)
 generateMap(data, map_config)
