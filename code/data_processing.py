@@ -114,6 +114,10 @@ def calculateDistance(data):
   data['Distance'] = data.apply(lambda x: calculateDistanceFromLatLong(x['Start_Latitude'],x['Start_Longitude'],x['End_Latitude'],x['End_Longitude']),axis=1)
   return data
 
+def calculateTotalLoss(data):
+    data['Total_Loss'] = data['Property_Loss'] + data['Crop_Loss']
+    return data
+
 def getCentralCoordinates(data):
   us_states_coordinates = {
     "Alabama": {"latitude": 32.806671, "longitude": -86.791130},
@@ -187,5 +191,6 @@ if __name__ == "__main__":
     data = convertYardsToMeters(data)
     data = getStateNames(data)
     data = calculateDistance(data)
+    data = calculateTotalLoss(data)
     data = getCentralCoordinates(data)
     saveData(data)
