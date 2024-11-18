@@ -8,7 +8,7 @@ from pages.map_config import *
 
 def setupFilters(data):
     """
-    Função responsável por configurar os filtros presentes na página de visualização de Mapas.
+    Função responsável por configurar os filtros presentes na página de visualização de mapas.
     """
     date_min, date_max = st.select_slider('Data', options=data['Date'].sort_values(), value=[data['Date'].min(),data['Date'].max()])
     states = st.multiselect('Estado', data['State'].unique(), default=None)
@@ -24,7 +24,7 @@ def setupFilters(data):
 
 def filterData(data, date_min, date_max, mag_min, mag_max, states):
     """
-    Função para Filtrar os dados a serem exibidos na página de visualização de Mapas.
+    Função responsável por aplicar os filtros aos dados a serem exibidos na página de visualização de mapas.
     """
     plot_data = data[(data['Date'] >= date_min) & (data['Date'] <= date_max)]
     plot_data = plot_data[(data['Magnitude'] >= mag_min) & (data['Magnitude'] <= mag_max)]
@@ -35,6 +35,9 @@ def filterData(data, date_min, date_max, mag_min, mag_max, states):
     return plot_data
 
 def calculateCards(data):
+    """
+    Função responsável por calcular os valores de métricas a serem exibidos em cards na página de visualização de mapas.
+    """
     totalTornados = len(data)
     totalLoss = np.round(data['Total_Loss'].sum()/1000000,2)
     totalFatalities = data['Fatalities'].sum()
@@ -43,6 +46,9 @@ def calculateCards(data):
     return totalTornados, totalLoss, totalFatalities, totalInjuries
 
 def positionCards(app_directory, totalTornados, totalLoss, totalFatalities, totalInjuries):
+    """
+    Função responsável por posicionar os cards na página de visualização de mapas.
+    """
     space_left,\
     column_image_1, column_1,\
     column_image_2, column_2,\
@@ -76,6 +82,9 @@ def positionCards(app_directory, totalTornados, totalLoss, totalFatalities, tota
 
 
 def getMapConfiguration(map_view, measure):
+    """
+    Função responsável por obter o arquivo correto de configuração do mapa, com base no filtro de seleção de variável a ser exposta.
+    """
     if map_view == 'Trajetórias':
         return tracks_config
     elif map_view == 'Colunas':
@@ -89,6 +98,9 @@ def getMapConfiguration(map_view, measure):
             return loss_hex
 
 def generateMap(data, map_config):
+    """
+    Função responsável pela geração do mapa, a partir dos dados filtrados e do arquivo de configuração adequado.
+    """
     map = KeplerGl(height=600, config=map_config)
     map.add_data(data=mapData,name='Tornados')
     keplergl_static(map,width=1250)
