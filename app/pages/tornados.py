@@ -27,18 +27,18 @@ def plotCards(plot_data):
     column_1, column_2, column_3 = st.columns([2.0, 2.0, 2.0])
 
     tornadoTotal = plot_data[['State']].count().astype(int)
-    comprimentoMedia = np.round(plot_data[['Length']].sum() / len(plot_data[['Length']]),2)
-    larguraMedia = np.round(plot_data[['Width']].sum() / len(plot_data[['Width']]),2)
+    comprimentoMedia = np.round(plot_data['Length'].mean(),2)
+    larguraMedia = np.round(plot_data['Width'].mean(),2)
 
     # plot dos cards com os big numbers
     with column_1:
         st.metric('Número de Tornados', tornadoTotal)
 
     with column_2:
-        st.metric('Média de Comprimento', 0 if len(states) == 0 else comprimentoMedia)
+        st.metric('Média de Comprimento (metros)', comprimentoMedia)
 
     with column_3:
-        st.metric('Média de Largura', 0 if len(states) == 0 else larguraMedia)
+        st.metric('Média de Largura (metros)', larguraMedia)
 
 # Cria uma visualizacao de um grafico de distribuicao de tornados por tempo
 def distTornados(plot_data):
