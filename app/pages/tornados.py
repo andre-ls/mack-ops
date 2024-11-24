@@ -22,25 +22,23 @@ def plotCards(data, states, magnitude, date_min, date_max):
         plot_data = data[data['State'].isin(states)]
         plot_data = plot_data[plot_data['Datetime'].between(date_min, date_max)]
         plot_data = plot_data[plot_data['Magnitude'] == magnitude] if magnitude != None else plot_data
-        comprimentoMedia = np.round(plot_data[['Length']].sum() / len(plot_data[['Length']]),2)
-        larguraMedia = np.round(plot_data[['Width']].sum() / len(plot_data[['Width']]),2)
     else:
         plot_data = data
-        comprimentoMedia = 0
-        larguraMedia = 0
         
     column_1, column_2, column_3 = st.columns([2.0, 2.0, 2.0])
 
     tornadoTotal = plot_data[['State']].count().astype(int)
+    comprimentoMedia = np.round(plot_data[['Length']].sum() / len(plot_data[['Length']]),2)
+    larguraMedia = np.round(plot_data[['Width']].sum() / len(plot_data[['Width']]),2)
 
     with column_1:
         st.metric('Número de Tornados', tornadoTotal)
 
     with column_2:
-        st.metric('Média de Comprimento', comprimentoMedia)
+        st.metric('Média de Comprimento', 0 if len(states) == 0 else comprimentoMedia)
 
     with column_3:
-        st.metric('Média de Largura', larguraMedia)
+        st.metric('Média de Largura', 0 if len(states) == 0 else larguraMedia)
 
 def distTornados(data, states, magnitude, date_min, date_max):
     if states is not None:
