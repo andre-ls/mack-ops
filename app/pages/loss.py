@@ -39,8 +39,8 @@ def exibir_metricas_principais(data,app_directory):
 
     column_1.metric("Perdas de Propriedades", f"${data['Property_Loss'].sum()/1000000:,.2f} M")
     column_2.metric("Perdas de Colheitas", f"${data['Crop_Loss'].sum()/1000000:,.2f} M")
-    column_3.metric("Fatalidades", int(data['Fatalities'].sum()))
-    column_4.metric("Feridos", int(data['Injuries'].sum()))
+    column_3.metric("Feridos", int(data['Injuries'].sum()))
+    column_4.metric("Fatalidades", int(data['Fatalities'].sum()))
 
     column_image_1.image(os.path.join(app_directory,"images/perda-de-dinheiro.png"),width=70)
     column_image_2.image(os.path.join(app_directory,"images/plantacoes.png"),width=70)
