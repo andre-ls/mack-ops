@@ -1,3 +1,4 @@
+import os
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -21,24 +22,33 @@ def filterData(data, date_min, date_max, mag_min, mag_max, states):
     return plot_data
 
 # Cria uma visualizacao de cards com os numeros absolutos
-def plotCards(plot_data):
+def plotCards(plot_data, app_directory):
 
     # definicao dos espacamentos das colunas
-    column_1, column_2, column_3 = st.columns([2.0, 2.0, 2.0])
+    #column_1, column_2, column_3 = st.columns([2.0, 2.0, 2.0])
+    space_left,\
+    column_image_1, column_1,\
+    column_image_2, column_2,\
+    column_image_3, column_3,\
+    space_right = st.columns([1.0, 0.7, 2.0, 0.7, 2.0, 0.7, 2.0, 0.2])
 
     tornadoTotal = plot_data[['State']].count().astype(int)
     comprimentoMedia = np.round(plot_data['Length'].mean(),2)
     larguraMedia = np.round(plot_data['Width'].mean(),2)
 
-    # plot dos cards com os big numbers
     with column_1:
         st.metric('Número de Tornados', tornadoTotal)
-
     with column_2:
         st.metric('Média de Comprimento (metros)', comprimentoMedia)
-
     with column_3:
         st.metric('Média de Largura (metros)', larguraMedia)
+
+    with column_image_1:
+        st.image(os.path.join(app_directory,"images/tornado.png"),width=70)
+    with column_image_2:
+        st.image(os.path.join(app_directory,"images/comprimento.png"),width=70)
+    with column_image_3:
+        st.image(os.path.join(app_directory,"images/largura.png"),width=70)
 
 # Cria uma visualizacao de um grafico de distribuicao de tornados por tempo
 def distTornados(plot_data):
@@ -92,14 +102,15 @@ def barraMagnitude(plot_data):
     plot_data = plot_data.groupby(plot_data['Magnitude']).size().reset_index(name='Contagem')
     st.bar_chart(plot_data, x="Magnitude", y="Contagem")
 
-st.title('Dados de Tornados')
+st.title('🌪️Tornados')
 with st.sidebar:
     st.title('Filtros')
     data = st.session_state['data']
+    app_directory = st.session_state['app_directory']
     date_min, date_max, mag_min, mag_max, states = createFilters(data)
     filtered_data = filterData(data, date_min, date_max, mag_min, mag_max, states)
 
-plotCards(filtered_data)
+plotCards(filtered_data, app_directory)
 
 col_1, col_2 = st.columns(2)
 with col_1:
