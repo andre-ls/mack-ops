@@ -4,6 +4,6 @@ geopy
 streamlit
 streamlit-keplergl
 seaborn
-matplotlib.pyplot
+matplotlib
 vega_datasets
 keplergl
