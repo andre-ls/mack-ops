@@ -1,3 +1,4 @@
+import os
 import streamlit as st
 import pandas as pd
 import altair as alt
@@ -24,13 +25,24 @@ def aplicar_filtros(data, date_min, date_max, states):
 
     return plot_data
 
-def exibir_metricas_principais(data):
-    st.subheader("Métricas Principais")
+def exibir_metricas_principais(data,app_directory):
     col1, col2, col3, col4 = st.columns(4)
-    col1.metric("Perdas de Propriedades", f"${data['Property_Loss'].sum()/1000000:,.2f} M")
-    col2.metric("Perdas de Colheitas", f"${data['Crop_Loss'].sum()/1000000:,.2f} M")
-    col3.metric("Fatalidades", int(data['Fatalities'].sum()))
-    col4.metric("Feridos", int(data['Injuries'].sum()))
+    space_left,\
+    column_image_1, column_1,\
+    column_image_2, column_2,\
+    column_image_3, column_3,\
+    column_image_4, column_4,\
+    space_right = st.columns([1.0, 0.7, 2.0, 0.7, 2.0, 0.7, 2.0, 0.7, 2.0, 0.2])
+
+    column_1.metric("Perdas de Propriedades", f"${data['Property_Loss'].sum()/1000000:,.2f} M")
+    column_2.metric("Perdas de Colheitas", f"${data['Crop_Loss'].sum()/1000000:,.2f} M")
+    column_3.metric("Fatalidades", int(data['Fatalities'].sum()))
+    column_4.metric("Feridos", int(data['Injuries'].sum()))
+
+    column_image_1.image(os.path.join(app_directory,"images/perda-de-dinheiro.png"),width=70)
+    column_image_2.image(os.path.join(app_directory,"images/plantacoes.png"),width=70)
+    column_image_3.image(os.path.join(app_directory,"images/paciente.png"),width=70)
+    column_image_4.image(os.path.join(app_directory,"images/farmacia.png"),width=70)
 
 def gerar_serie_temporal(data, metrica):
     st.subheader("Série Temporal de Perdas")
@@ -52,21 +64,21 @@ def gerar_distribuicao_estado(data, metrica):
         "Fatalities" if metrica == "Fatalidades" else
         "Injuries"
     )
-    st.subheader("Distribuição por Estado")
+    st.subheader("Estados com Maiores Perdas")
     barras_por_estado = data.groupby('State')[serie_metrica].sum().reset_index()
     barras_por_estado = barras_por_estado.sort_values(by=serie_metrica, ascending=False)[:20]
     c = alt.Chart(barras_por_estado).mark_bar().encode(y=alt.Y("State", sort=None,title='Estados'), x=alt.X(serie_metrica,title=metrica))
     st.altair_chart(c)
 
-# Função principal para orquestrar a aplicação
-st.title("Análise de Perdas e Prejuízos de Tornados")
+st.title("💰Perdas e Prejuízos")
 with st.sidebar:
     st.title('Filtros')
     data = st.session_state['data']
     app_directory = st.session_state['app_directory']
     date_min, date_max, states, measure = criar_filtros(data)
+    data = aplicar_filtros(data, date_min, date_max, states)
 
-exibir_metricas_principais(data)
+exibir_metricas_principais(data, app_directory)
 
 time_series, bar_chart = st.columns([0.7,0.3])
 
