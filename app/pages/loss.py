@@ -9,7 +9,7 @@ def criar_filtros(data):
     Função responsável por configurar os filtros presentes na página de visualização de perdas.
     """
     date_min, date_max = st.select_slider('Data', options=data['Date'].sort_values(), value=[data['Date'].min(),data['Date'].max()])
-    states = st.multiselect('Estado', data['State'].unique(), default=None)
+    states = st.multiselect('Estado', data['State'].unique(), default=None, placeholder='Todos')
     measure = st.selectbox('Medida a ser exibida', options=['Perdas de Propriedades','Perdas de Colheitas','Fatalidades','Feridos'])
 
     return date_min, date_max, states, measure
@@ -55,7 +55,7 @@ def gerar_serie_temporal(data, metrica):
     serie_temporal = data[['Date', serie_metrica]]
     serie_temporal['Date'] = pd.to_datetime(serie_temporal['Date'], errors='coerce')
     serie_temporal = serie_temporal.set_index('Date').resample('M').sum()
-    st.line_chart(serie_temporal, y=serie_metrica, y_label=metrica, height=500)
+    st.line_chart(serie_temporal, y=serie_metrica, y_label=metrica, height=450)
 
 def gerar_distribuicao_estado(data, metrica):
     serie_metrica = (
