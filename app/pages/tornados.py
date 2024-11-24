@@ -3,10 +3,7 @@ import pandas as pd
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
-import folium
-import plotly.figure_factory as ff
 from vega_datasets import data
-from datetime import datetime
 
 st.title('Dados de Tornados')
 
@@ -17,7 +14,10 @@ with st.sidebar:
     estado = st.sidebar.multiselect('Estado', options = data['State'].unique(), default = None)
     magnitude = st.selectbox('Magnitude', options = data['Magnitude'].sort_values().unique(), index = None)
 
+# Cria uma visualizacao de cards com os numeros absolutos
 def plotCards(data, states, magnitude, date_min, date_max):
+
+    # preparaca dos dados aplicando os filtros 
     if states is not None:
         plot_data = data[data['State'].isin(states)]
         plot_data = plot_data[plot_data['Datetime'].between(date_min, date_max)]
@@ -25,12 +25,14 @@ def plotCards(data, states, magnitude, date_min, date_max):
     else:
         plot_data = data
         
+    # definicao dos espacamentos das colunas
     column_1, column_2, column_3 = st.columns([2.0, 2.0, 2.0])
 
     tornadoTotal = plot_data[['State']].count().astype(int)
     comprimentoMedia = np.round(plot_data[['Length']].sum() / len(plot_data[['Length']]),2)
     larguraMedia = np.round(plot_data[['Width']].sum() / len(plot_data[['Width']]),2)
 
+    # plot dos cards com os big numbers
     with column_1:
         st.metric('Número de Tornados', tornadoTotal)
 
@@ -40,7 +42,10 @@ def plotCards(data, states, magnitude, date_min, date_max):
     with column_3:
         st.metric('Média de Largura', 0 if len(states) == 0 else larguraMedia)
 
+# Cria uma visualizacao de um grafico de distribuicao de tornados por tempo
 def distTornados(data, states, magnitude, date_min, date_max):
+    
+    # preparacao dos dados aplicando os filtros 
     if states is not None:
         plot_data = data[data['State'].isin(states)]
         plot_data = plot_data[plot_data['Datetime'].between(date_min, date_max)]
@@ -49,14 +54,15 @@ def distTornados(data, states, magnitude, date_min, date_max):
     else:
         plot_data = data
 
+    # altera o formato da data
     dfPorDia = plot_data.groupby(plot_data['Datetime']).size().reset_index(name='contagem')
 
     x = dfPorDia['Datetime']
     y = dfPorDia['contagem']
-    z = x
 
     plt.plot(x, y)
 
+    # ateracoes visuais do grafico
     plt.title('Distribuição de Tornados por Dia', color='white')
     plt.xlabel('Data', color='white')
     plt.ylabel('Número de Tornados', color='white')
@@ -78,7 +84,10 @@ def distTornados(data, states, magnitude, date_min, date_max):
 
     st.pyplot(plt.gcf())
 
+# Cria a visualizacao de um hexplot com os dados de posicao dos tornados
 def hexPlot(data, states, magnitude, date_min, date_max):
+    
+    # preparacao dos dados aplicando os filtros 
     if states is not None:
         plot_data = data[data['State'].isin(states)]
         plot_data = plot_data[plot_data['Datetime'].between(date_min, date_max)]
@@ -120,7 +129,10 @@ def hexPlot(data, states, magnitude, date_min, date_max):
 
     st.pyplot(plt.gcf())
 
+# Cria uma visualizacao de um grafico de distribuição da Distância Percorrida em km pelos tornados
 def distDistancia(data, states, magnitude, date_min, date_max):
+    
+    # preparacao dos dados aplicando os filtros 
     if states is not None:
         plot_data = data[data['State'].isin(states)]
         plot_data = plot_data[plot_data['Datetime'].between(date_min, date_max)]
@@ -132,10 +144,12 @@ def distDistancia(data, states, magnitude, date_min, date_max):
 
     sns.histplot(plot_data['Distance'], kde=True, bins=10)
 
+    # definicao dos nomes dos eixos
     plt.title('Distribuição de Distância Percorrida por Ocorrência', fontsize=16, color='white')
     plt.xlabel('Distância Percorrida (km)', fontsize=12, color='white')
     plt.ylabel('Frequência', fontsize=12, color='white')
 
+    # alteracoes visuais do grafico
     plt.xlim(0, 150)
     sns.despine()
 
@@ -152,9 +166,13 @@ def distDistancia(data, states, magnitude, date_min, date_max):
     plt.tick_params(axis='x', colors='white')  # Cor das marcas do eixo X
     plt.tick_params(axis='y', colors='white')  # Cor das marcas do eixo Y
 
+    # mostrar o grafico
     st.pyplot(plt.gcf())
 
+# Cria uma visualizacao de um grafico de barras apresetando os valores de magnitudes dos tornados
 def barraMagnitude(data, states, magnitude, date_min, date_max):
+    
+    # preparacao dos dados aplicando os filtros 
     if states is not None:
         plot_data = data[data['State'].isin(states)]
         plot_data = plot_data[plot_data['Datetime'].between(date_min, date_max)]
@@ -162,9 +180,12 @@ def barraMagnitude(data, states, magnitude, date_min, date_max):
     else:
         plot_data = data
 
+    # plot do grafico de barras com a distribuicao de magnitude dos tornados
     df = plot_data[['State', 'Magnitude']]
     st.bar_chart(df, x="State", y="Magnitude", color="Magnitude", stack=False)
 
+
+# Comandos que chamam a criacao dos graficos gerados para a pagina do streamlit
 st.write("#")
 plotCards(data, estado, magnitude, date_min, date_max)
 st.write("#")

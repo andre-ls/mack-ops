@@ -3,3 +3,6 @@ pandas
 geopy
 streamlit
 streamlit-keplergl
+seaborn
+matplotlib.pyplot
+vega_datasets
