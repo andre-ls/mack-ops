@@ -7,12 +7,18 @@ import matplotlib.pyplot as plt
 from vega_datasets import data
 
 def createFilters(data):
+    """
+    Função responsável por configurar os filtros presentes na página de visualização de dados de tornados.
+    """
     date_min, date_max = st.select_slider('Data', options = data['Date'].sort_values(), value=[data['Date'].min(),data['Date'].max()])
     states = st.sidebar.multiselect('Estado', options = data['State'].unique(), default = None)
     mag_min, mag_max = st.select_slider('Magnitude',options=data['Magnitude'].sort_values().unique(),value=[data['Magnitude'].min(),data['Magnitude'].max()])
     return date_min, date_max, mag_min, mag_max, states
 
 def filterData(data, date_min, date_max, mag_min, mag_max, states):
+    """
+    Função responsável por filtrar os dados utilizados na página de visualização de dados de tornados.
+    """
     plot_data = data[(data['Date'] >= date_min) & (data['Date'] <= date_max)]
     plot_data = plot_data[(data['Magnitude'] >= mag_min) & (data['Magnitude'] <= mag_max)]
 
@@ -21,11 +27,10 @@ def filterData(data, date_min, date_max, mag_min, mag_max, states):
 
     return plot_data
 
-# Cria uma visualizacao de cards com os numeros absolutos
 def plotCards(plot_data, app_directory):
-
-    # definicao dos espacamentos das colunas
-    #column_1, column_2, column_3 = st.columns([2.0, 2.0, 2.0])
+    """
+    Função responsável por gerar as visualizações em cards na página de visualização de dados de tornados.
+    """
     space_left,\
     column_image_1, column_1,\
     column_image_2, column_2,\
@@ -50,8 +55,10 @@ def plotCards(plot_data, app_directory):
     with column_image_3:
         st.image(os.path.join(app_directory,"images/largura.png"),width=70)
 
-# Cria uma visualizacao de um grafico de distribuicao de tornados por tempo
 def distTornados(plot_data):
+    """
+    Função responsável por gerar a visualização de série temporal de ocorrência de tornados na paǵina de visualização de dados de tornados.
+    """
     st.subheader('Série Temporal de Tornados')
     dfPorDia = plot_data.groupby(plot_data['Date']).size().reset_index(name='Contagem')
     dfPorDia['Date'] = pd.to_datetime(dfPorDia['Date'], errors='coerce')
@@ -59,13 +66,17 @@ def distTornados(plot_data):
 
     st.line_chart(dfPorDia, y='Contagem', y_label='Tornados')
 
-# Cria a visualizacao de um hexplot com os dados de posicao dos tornados
 def scatterPlot(plot_data):
+    """
+    Função responsável por gerar a visualização de Scatter Plot de Comprimento x Largura na paǵina de visualização de dados de tornados.
+    """
     st.subheader('Largura e Comprimento')
     st.scatter_chart(plot_data,x='Width',y='Length',x_label='Largura (em metros)',y_label='Comprimento (em metros)')
 
-# Cria uma visualizacao de um grafico de distribuição da Distância Percorrida em km pelos tornados
 def distDistancia(plot_data):
+    """
+    Função responsável por gerar a visualização de distribuição de Distâncias percorridas na paǵina de visualização de dados de tornados.
+    """
     
     plt.figure(figsize=(8, 4.2))
     st.subheader('Distribuição por Distâncias Percorridas')
@@ -96,8 +107,10 @@ def distDistancia(plot_data):
     # mostrar o grafico
     st.pyplot(plt.gcf())
 
-# Cria uma visualizacao de um grafico de barras apresetando os valores de magnitudes dos tornados
 def barraMagnitude(plot_data):
+    """
+    Função responsável por gerar a visualização de barras por Magnitude na página de visualização de dados de tornados.
+    """
     st.subheader('Magnitude de Tornados')
     plot_data = plot_data.groupby(plot_data['Magnitude']).size().reset_index(name='Contagem')
     st.bar_chart(plot_data, x="Magnitude", y="Contagem")
