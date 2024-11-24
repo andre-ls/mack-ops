@@ -10,7 +10,7 @@ st.title('Dados de Tornados')
 with st.sidebar:
     st.title('Filtros')
     data = st.session_state['data']
-    date_min, date_max = st.select_slider('Data', options = data['Datetime'].sort_values(), value=[data['Datetime'].min(),data['Datetime'].max()])
+    date_min, date_max = st.select_slider('Data', options = data['Date'].sort_values(), value=[data['Date'].min(),data['Date'].max()])
     estado = st.sidebar.multiselect('Estado', options = data['State'].unique(), default = None)
     magnitude = st.selectbox('Magnitude', options = data['Magnitude'].sort_values().unique(), index = None)
 
@@ -20,7 +20,7 @@ def plotCards(data, states, magnitude, date_min, date_max):
     # preparaca dos dados aplicando os filtros 
     if states is not None:
         plot_data = data[data['State'].isin(states)]
-        plot_data = plot_data[plot_data['Datetime'].between(date_min, date_max)]
+        plot_data = plot_data[plot_data['Date'].between(date_min, date_max)]
         plot_data = plot_data[plot_data['Magnitude'] == magnitude] if magnitude != None else plot_data
     else:
         plot_data = data
@@ -48,16 +48,16 @@ def distTornados(data, states, magnitude, date_min, date_max):
     # preparacao dos dados aplicando os filtros 
     if states is not None:
         plot_data = data[data['State'].isin(states)]
-        plot_data = plot_data[plot_data['Datetime'].between(date_min, date_max)]
+        plot_data = plot_data[plot_data['Date'].between(date_min, date_max)]
         plot_data = plot_data[plot_data['Magnitude'] == magnitude] if magnitude != None else plot_data
-        plot_data['Datetime'] = pd.to_datetime(plot_data['Datetime']).dt.date
+        #plot_data['Datetime'] = pd.to_datetime(plot_data['Datetime']).dt.date
     else:
         plot_data = data
 
     # altera o formato da data
-    dfPorDia = plot_data.groupby(plot_data['Datetime']).size().reset_index(name='contagem')
+    dfPorDia = plot_data.groupby(plot_data['Date']).size().reset_index(name='contagem')
 
-    x = dfPorDia['Datetime']
+    x = dfPorDia['Date']
     y = dfPorDia['contagem']
 
     plt.plot(x, y)
@@ -90,7 +90,7 @@ def hexPlot(data, states, magnitude, date_min, date_max):
     # preparacao dos dados aplicando os filtros 
     if states is not None:
         plot_data = data[data['State'].isin(states)]
-        plot_data = plot_data[plot_data['Datetime'].between(date_min, date_max)]
+        plot_data = plot_data[plot_data['Date'].between(date_min, date_max)]
         plot_data = plot_data[plot_data['Magnitude'] == magnitude] if magnitude != None else plot_data
     else:
         plot_data = data
@@ -135,7 +135,7 @@ def distDistancia(data, states, magnitude, date_min, date_max):
     # preparacao dos dados aplicando os filtros 
     if states is not None:
         plot_data = data[data['State'].isin(states)]
-        plot_data = plot_data[plot_data['Datetime'].between(date_min, date_max)]
+        plot_data = plot_data[plot_data['Date'].between(date_min, date_max)]
         plot_data = plot_data[plot_data['Magnitude'] == magnitude] if magnitude != None else plot_data
     else:
         plot_data = data
@@ -175,7 +175,7 @@ def barraMagnitude(data, states, magnitude, date_min, date_max):
     # preparacao dos dados aplicando os filtros 
     if states is not None:
         plot_data = data[data['State'].isin(states)]
-        plot_data = plot_data[plot_data['Datetime'].between(date_min, date_max)]
+        plot_data = plot_data[plot_data['Date'].between(date_min, date_max)]
         plot_data = plot_data[plot_data['Magnitude'] == magnitude] if magnitude != None else plot_data
     else:
         plot_data = data
