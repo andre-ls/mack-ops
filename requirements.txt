@@ -6,3 +6,4 @@ streamlit-keplergl
 seaborn
 matplotlib.pyplot
 vega_datasets
+keplergl

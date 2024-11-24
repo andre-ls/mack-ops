@@ -9,11 +9,14 @@ def readData():
 def filterOldMagnitude(data):
   return data[data['fc'] == 0]
 
+def filterNonIdentifiedMagnitudes(data):
+  return data[data['mag'] >= 0]
+
 def filterColumns(data):
   return data.drop(['OBJECTID','om','yr','mo','dy','stf','stn','Month_Calc','Date_Calc','Shape__Length','fc'],axis=1)
 
-def generateDateTimeColumn(data):
-  data['Datetime'] = pd.to_datetime(data['date'] + ' ' + data['time'] + '-' + data['tz'].astype(str))
+def formatDateColumn(data):
+  data['Date'] = pd.to_datetime(data['date'])
   return data.drop(['date','time','tz'],axis=1)
 
 def renameColumns(data):
@@ -111,6 +114,10 @@ def calculateDistance(data):
   data['Distance'] = data.apply(lambda x: calculateDistanceFromLatLong(x['Start_Latitude'],x['Start_Longitude'],x['End_Latitude'],x['End_Longitude']),axis=1)
   return data
 
+def calculateTotalLoss(data):
+    data['Total_Loss'] = data['Property_Loss'] + data['Crop_Loss']
+    return data
+
 def getCentralCoordinates(data):
   us_states_coordinates = {
     "Alabama": {"latitude": 32.806671, "longitude": -86.791130},
@@ -177,11 +184,13 @@ def saveData(data):
 if __name__ == "__main__":
     data = readData()
     data = filterOldMagnitude(data)
+    data = filterNonIdentifiedMagnitudes(data)
     data = filterColumns(data)
-    data = generateDateTimeColumn(data)
+    data = formatDateColumn(data)
     data = renameColumns(data)
     data = convertYardsToMeters(data)
     data = getStateNames(data)
     data = calculateDistance(data)
+    data = calculateTotalLoss(data)
     data = getCentralCoordinates(data)
     saveData(data)
