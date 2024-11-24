@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import altair as alt
 
 
 def criar_filtros(data):
@@ -26,12 +27,13 @@ def aplicar_filtros(data, date_min, date_max, states):
 def exibir_metricas_principais(data):
     st.subheader("Métricas Principais")
     col1, col2, col3, col4 = st.columns(4)
-    col1.metric("Perdas de Propriedades", f"${data['Property_Loss'].sum():,.2f}")
-    col2.metric("Perdas de Colheitas", f"${data['Crop_Loss'].sum():,.2f}")
+    col1.metric("Perdas de Propriedades", f"${data['Property_Loss'].sum()/1000000:,.2f} M")
+    col2.metric("Perdas de Colheitas", f"${data['Crop_Loss'].sum()/1000000:,.2f} M")
     col3.metric("Fatalidades", int(data['Fatalities'].sum()))
     col4.metric("Feridos", int(data['Injuries'].sum()))
 
 def gerar_serie_temporal(data, metrica):
+    st.subheader("Série Temporal de Perdas")
     serie_metrica = (
         "Property_Loss" if metrica == "Perdas de Propriedades" else
         "Crop_Loss" if metrica == "Perdas de Colheitas" else
@@ -41,7 +43,7 @@ def gerar_serie_temporal(data, metrica):
     serie_temporal = data[['Date', serie_metrica]]
     serie_temporal['Date'] = pd.to_datetime(serie_temporal['Date'], errors='coerce')
     serie_temporal = serie_temporal.set_index('Date').resample('M').sum()
-    st.line_chart(serie_temporal, y=serie_metrica)
+    st.line_chart(serie_temporal, y=serie_metrica, y_label=metrica, height=500)
 
 def gerar_distribuicao_estado(data, metrica):
     serie_metrica = (
@@ -51,8 +53,10 @@ def gerar_distribuicao_estado(data, metrica):
         "Injuries"
     )
     st.subheader("Distribuição por Estado")
-    barras_por_estado = data.groupby('State')[serie_metrica].sum()
-    st.bar_chart(barras_por_estado)
+    barras_por_estado = data.groupby('State')[serie_metrica].sum().reset_index()
+    barras_por_estado = barras_por_estado.sort_values(by=serie_metrica, ascending=False)[:20]
+    c = alt.Chart(barras_por_estado).mark_bar().encode(y=alt.Y("State", sort=None,title='Estados'), x=alt.X(serie_metrica,title=metrica))
+    st.altair_chart(c)
 
 # Função principal para orquestrar a aplicação
 st.title("Análise de Perdas e Prejuízos de Tornados")
@@ -64,8 +68,10 @@ with st.sidebar:
 
 exibir_metricas_principais(data)
 
-# Gerar a série temporal
-gerar_serie_temporal(data, measure)
+time_series, bar_chart = st.columns([0.7,0.3])
 
-# Gerar a distribuição por estado
-gerar_distribuicao_estado(data, measure)
+with time_series:
+    gerar_serie_temporal(data, measure)
+
+with bar_chart:
+    gerar_distribuicao_estado(data, measure)
