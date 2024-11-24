@@ -167,12 +167,15 @@ def barraMagnitude(data, states, magnitude, date_min, date_max):
     df = plot_data[['State', 'Magnitude']]
     st.bar_chart(df, x="State", y="Magnitude", color="Magnitude", stack=False)
 
+st.write("#")
 plotCards(data, estado, magnitude, date_min, date_max)
-
+st.write("#")
 distTornados(data, estado, magnitude, date_min, date_max)
-
+st.write("#")
 hexPlot(data, estado, magnitude, date_min, date_max)
-
+st.write("#")
 distDistancia(data, estado, magnitude, date_min, date_max)
-
+st.write("#")
+st.markdown("<h5 style='text-align: center; color: white;'> Magnitude dos Tornados </h5>", unsafe_allow_html=True)
+st.write("#")
 barraMagnitude(data, estado, magnitude, date_min, date_max)
