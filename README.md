@@ -39,8 +39,14 @@ Para a composição deste projeto, uma estrutura simples foi montada utilizando 
 Como resultado, construiu-se uma aplicação no Streamlit compondo um dashboard com 3 páginas principais:
 
 - Visualização de Mapas: Página contendo gráficos em mapas para exploração da trajetória dos tornados, e algumas métricas agregadas por Estado.
+
+  ![Mapas](/app/images/pag-mapas.png)
 - Visualização de Dados Físicos: Página contendo visualizações focadas na exploração de características físicas dos tornados, como suas dimensões, distâncias percorridas e data de ocorrência.
+
+  ![Mapas](/app/images/pag-tornados.png)
 - Visualização de Perdas: Página contendo visualizações focadas nos danos e perdas econômicas causadas pelos tornados.
+
+  ![Mapas](/app/images/pag-perdas.png)
 
 ## Sobre o Projeto
 
